@@ -3,11 +3,17 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { languages, soils } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 export default function SoilSelect() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const lang = searchParams.get("lang") || "en";
+    const [languageLabel, setLanguageLabel] = useState(languages[lang] || "English");
+
+    useEffect(() => {
+        setLanguageLabel(languages[lang] || "English");
+    }, [lang]);
   const crop = searchParams.get("crop") || "";
 
   const handleSoilSelect = (soilType: string) => {
@@ -16,7 +22,7 @@ export default function SoilSelect() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1 className="text-3xl font-bold mb-4">Select Your Soil Type</h1>
+      <h1 className="text-3xl font-bold mb-4">{languages[lang]?.selectSoilType || "Select Your Soil Type"}</h1>
       <div className="grid grid-cols-2 gap-4">
         {Object.entries(soils).map(([key, soil]) => (
           <div

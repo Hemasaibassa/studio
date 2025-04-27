@@ -24,7 +24,7 @@ export default function CropList() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1 className="text-3xl font-bold mb-4">Select Your Crop</h1>
+      <h1 className="text-3xl font-bold mb-4">{languages[lang]?.selectYourCrop || "Select Your Crop"}</h1>
       <div className="grid grid-cols-2 gap-4">
         {filteredCrops.map((crop) => (
           <div

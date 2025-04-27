@@ -3,48 +3,48 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { analyzeCropHealth } from "@/ai/flows/analyze-crop-health";
 
-export default function Analysis() {
+interface AnalysisResult {
+  diagnosis: string;
+  confidence: number;
+  recommendations: {
+    chemicalPesticides: string[];
+    organicPesticides: string[];
+  };
+}
+
+export function AnalysisContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const lang = searchParams.get("lang") || "en";
-  const crop = searchParams.get("crop") || "";
-  const soil = searchParams.get("soil") || "";
-  const leafImage = searchParams.get("leafImage") || "";
-  const temperature = searchParams.get("temperature") || "";
-  const conditions = searchParams.get("conditions") || "";
-  const humidity = searchParams.get("humidity") || "";
-  const windSpeed = searchParams.get("windSpeed") || "";
 
-  const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
 
   useEffect(() => {
-    const analyze = async () => {
+    const fetchData = async () => {
       try {
-        const cropType = crop === "papaya" ? "fruit" : "vegetable"; // Example logic
-        const analysis = await analyzeCropHealth({
-          cropType: cropType,
-          cropName: crop,
-          soilType: soil,
-          photoDataUri: decodeURIComponent(leafImage),
-          soilAnalysisDataUri: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w+nLly8YAfT39//MZGbgAAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAAEnQAABJ0Ad5mXcgAAAAhdEVYdENyZWF0aW9uIFRpbWUAZGF0ZSA4LzE1LzIzMEJqAAAAAElFTkSuQmCC", // Dummy data URI since soil analysis is removed
-          weatherData: {
-            temperatureCelsius: Number(temperature),
-            conditions: conditions,
-            humidity: Number(humidity),
-            windSpeedKph: Number(windSpeed),
-          },
-        });
-        setAnalysisResult(analysis);
-      } catch (error: any) {
-        console.error("Analysis failed", error);
+        const response = await fetch(`/api/analysis?lang=${lang}`,{
+            method: 'GET', // Specify the method
+            headers: {
+              'Content-Type': 'application/json', // Set the Content-Type header
+            }
+          });
+
+        if (response.ok) {
+          const data: AnalysisResult = await response.json();
+          setAnalysisResult(data);
+        } else {
+          console.error('Failed to fetch analysis data', response.status);
+          setAnalysisResult({ diagnosis: "Analysis failed. Please try again.", confidence: 0, recommendations: { chemicalPesticides: [], organicPesticides: [] } });
+        }
+      } catch (error) {
+        console.error('Error fetching analysis data', error);
         setAnalysisResult({ diagnosis: "Analysis failed. Please try again.", confidence: 0, recommendations: { chemicalPesticides: [], organicPesticides: [] } });
       }
     };
 
-    analyze();
-  }, [crop, soil, leafImage, temperature, conditions, humidity, windSpeed]);
+    fetchData();
+  }, [lang]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
