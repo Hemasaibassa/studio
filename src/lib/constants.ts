@@ -13,7 +13,6 @@ export const languages: { [key: string]: any } = {
     vegetable: "Vegetable",
     next: "Next",
     selectYourCrop: "Select Your Crop",
-    selectSoilType: "Select Your Soil Type",
     getMedicines: "Get Medicines",
     medicinesAvailable: "This page will show available medicines for the recommended pesticides.",
     home: "Home",
@@ -49,7 +48,6 @@ export const languages: { [key: string]: any } = {
     locationNameTitle: "Location Name",
     locationNamePlaceholder: "Enter location name",
     unknownLocation: "Unknown location",
-    selectYourSoilType: "Select Your Soil Type",
     analysisResult: "Crop Analysis",
     diagnosis: "Diagnosis",
     confidence: "Confidence",
@@ -73,7 +71,6 @@ export const languages: { [key: string]: any } = {
     vegetable: "सब्जी",
     next: "अगला",
     selectYourCrop: "अपनी फसल का चयन करें",
-    selectSoilType: "अपनी मिट्टी का प्रकार चुनें",
     getMedicines: "दवाएँ प्राप्त करें",
     medicinesAvailable: "यह पृष्ठ अनुशंसित कीटनाशकों के लिए उपलब्ध दवाएं दिखाएगा।",
     home: "होम",
@@ -109,7 +106,6 @@ export const languages: { [key: string]: any } = {
     locationNameTitle: "स्थान का नाम",
     locationNamePlaceholder: "स्थान का नाम दर्ज करें",
     unknownLocation: "अज्ञात स्थान",
-    selectYourSoilType: "अपनी मिट्टी का प्रकार चुनें",
     analysisResult: "फसल विश्लेषण",
     diagnosis: "निदान",
     confidence: "विश्वास",
@@ -133,7 +129,6 @@ export const languages: { [key: string]: any } = {
     vegetable: "भाजी",
     next: "पुढे",
     selectYourCrop: "आपले पीक निवडा",
-    selectSoilType: "आपल्या मातीचा प्रकार निवडा",
     getMedicines: "औषधे मिळवा",
     medicinesAvailable: "हे पृष्ठ शिफारस केलेल्या कीटकनाशकांसाठी उपलब्ध औषधे दर्शवेल.",
     home: "मुख्यपृष्ठ",
@@ -169,7 +164,6 @@ export const languages: { [key: string]: any } = {
     locationNameTitle: "ठिकाणाचे नाव",
     locationNamePlaceholder: "ठिकाणाचे नाव प्रविष्ट करा",
     unknownLocation: "अज्ञात ठिकाण",
-    selectYourSoilType: "तुमच्या मातीचा प्रकार निवडा",
     analysisResult: "पीक विश्लेषण",
     diagnosis: "निदान",
     confidence: "विश्वास",
@@ -193,7 +187,6 @@ export const languages: { [key: string]: any } = {
     vegetable: "కూరగాయ",
     next: "తదుపరి",
     selectYourCrop: "మీ పంటను ఎంచుకోండి",
-    selectSoilType: "మీ మట్టి రకాన్ని ఎంచుకోండి",
     getMedicines: "మందులు పొందండి",
     medicinesAvailable: "ఈ పేజీ సిఫార్సు చేయబడిన పురుగుమందుల కోసం అందుబాటులో ఉన్న మందులను చూపుతుంది.",
     home: "హోమ్",
@@ -229,7 +222,6 @@ export const languages: { [key: string]: any } = {
     locationNameTitle: "స్థాన పేరు",
     locationNamePlaceholder: "స్థాన పేరును నమోదు చేయండి",
     unknownLocation: "తెలియని ప్రదేశం",
-    selectYourSoilType: "మీ మట్టి రకాన్ని ఎంచుకోండి",
     analysisResult: "పంట విశ్లేషణ",
     diagnosis: "రోగ నిర్ధారణ",
     confidence: "విశ్వాసం",
@@ -263,26 +255,4 @@ export const crops: { [key: string]: { type: string; name: { [key: string]: stri
     image: "https://picsum.photos/100/100",
   },
   // Add more crops as needed
-};
-
-export const soils: { [key: string]: { name: { [key: string]: string }; image: string } } = {
-  sandy: {
-    name: {
-      en: "Sandy Soil",
-      hi: "बलुई मिट्टी",
-      mr: "वाळुची माती",
-      te: "ఇసుక నేల",
-    },
-    image: "https://picsum.photos/100/100",
-  },
-  clay: {
-    name: {
-      en: "Clay Soil",
-      hi: "चिकनी मिट्टी",
-      mr: "चिकणमाती",
-      te: "బంకమట్టి",
-    },
-    image: "https://picsum.photos/100/100",
-  },
-  // Add more soil types as needed
 };

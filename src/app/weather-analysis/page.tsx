@@ -154,7 +154,7 @@ export default function WeatherAnalysis() {
     if (leafImage && weather) {
       setIsAnalyzing(true);
       try {
-        const response = await fetch('/analysis', {
+        const response = await fetch('/api/analysis', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -244,7 +244,7 @@ export default function WeatherAnalysis() {
         <div className="border rounded-md p-4 shadow-sm" style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}>
           <h2 className="text-xl font-semibold mb-2">{languages[lang]?.leafImageTitle || "Leaf Image"}</h2>
           <img src={getImageSource()} alt={languages[lang]?.leafImageAlt || "Leaf Image"} className="w-32 h-32 object-cover rounded mb-2" style={{ borderRadius: '1rem' }} />
-          <Input type="file" accept="image/*" onChange={handleLeafImageUpload} disabled={showCamera} />
+          <Input type="file" accept="image/*" onChange={handleLeafImageUpload} disabled={showCamera} style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}/>
           <Button onClick={() => setShowCamera(true)} disabled={showCamera} style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}>
           <Camera className="mr-2" />
           {languages[lang]?.takePicture || "Take Picture"}
@@ -272,12 +272,6 @@ export default function WeatherAnalysis() {
         </div>
 
         <form onSubmit={(e) => e.preventDefault()} className="w-full">
-          <div className="grid gap-2">
-            <div className="space-y-1">
-              <h2 className="text-xl font-semibold mb-2">{languages[lang]?.locationNameTitle || "Location Name"}</h2>
-              <Input id="locationName" placeholder={languages[lang]?.locationNamePlaceholder || "Enter location name"} type="text" value={form.watch("locationName")} disabled style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }} />
-            </div>
-          </div>
           <Button type="submit" disabled={!leafImage || !weather || isAnalyzing} onClick={handleAnalyze}  style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}>
             {isAnalyzing
               ? languages[lang]?.analyzing || "Analyzing..."
@@ -297,3 +291,4 @@ export default function WeatherAnalysis() {
     </div>
   );
 }
+

@@ -3,7 +3,7 @@ import { analyzeCropHealth } from '@/ai/flows/analyze-crop-health';
 
 export async function POST(request: NextRequest) {
   try {
-    const { lang, crop, leafImage, temperature, conditions, humidity, windSpeed } = await request.json();
+    const { lang, crop, leafImage, temperature, conditions, humidity, windSpeed, locationName } = await request.json();
 
     const cropType = crop === 'papaya' ? 'fruit' : 'vegetable'; // Example logic
     const analysis = await analyzeCropHealth({
@@ -24,3 +24,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ diagnosis: 'Analysis failed. Please try again.', confidence: 0, recommendations: { chemicalPesticides: [], organicPesticides: [] } }, { status: 500 });
   }
 }
+
