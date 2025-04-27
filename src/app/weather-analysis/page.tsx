@@ -1,30 +1,20 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { languages, crops } from "@/lib/constants"; // Importing crops for localization
+import { languages, crops } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Location, Weather, getWeather } from "@/services/weather";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Camera } from "lucide-react";
-
-const formSchema = z.object({
-  locationName: z.string().min(2, {
-    message: "Location must be at least 2 characters.",
-  }),
-});
 
 export default function WeatherAnalysis() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const lang = searchParams.get("lang") || "en";
   const crop = searchParams.get("crop") || "";
-  const [languageLabel, setLanguageLabel] = useState(languages[lang] || "English");
   const [leafImage, setLeafImage] = useState<string | null>(null);
   const [weather, setWeather] = useState<Weather | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
@@ -36,17 +26,6 @@ export default function WeatherAnalysis() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGeolocationAvailable, setIsGeolocationAvailable] = useState(true);
 
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      locationName: "",
-    },
-  });
-
-  useEffect(() => {
-    setLanguageLabel(languages[lang] || "English");
-  }, [lang]);
 
   useEffect(() => {
     // Get user's current location
@@ -67,11 +46,9 @@ export default function WeatherAnalysis() {
             const data = await response.json();
             const fetchedLocationName = data.display_name || languages[lang]?.unknownLocation || "Unknown location";
             setLocationName(fetchedLocationName);
-            form.setValue("locationName", fetchedLocationName); // Set the form value
           } catch (error) {
             console.error("Error getting location name:", error);
             setLocationName(languages[lang]?.unknownLocation || "Unknown location");
-            form.setValue("locationName", languages[lang]?.unknownLocation || "Unknown location"); // Set the form value
           }
         },
         (error) => {
@@ -92,8 +69,7 @@ export default function WeatherAnalysis() {
         description: languages[lang]?.geolocationNotSupportedDescription || 'Your browser does not support geolocation.',
       });
     }
-  }, [lang, toast, form]);
-
+  }, [lang, toast]);
 
   useEffect(() => {
     const getCameraPermission = async () => {
@@ -167,7 +143,6 @@ export default function WeatherAnalysis() {
             conditions: weather.conditions,
             humidity: weather.humidity,
             windSpeed: weather.windSpeedKph,
-            locationName: locationName,
           }),
         });
 
@@ -212,9 +187,9 @@ export default function WeatherAnalysis() {
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen py-2 px-4 gap-4" style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}>
-      <h1 className="text-3xl font-bold mb-2"  style={{ color: 'white' }}>{languages[lang]?.weatherAnalysisTitle || "Weather Analysis & Image Upload"}</h1>
+      <h1 className="text-3xl font-bold mb-2 text-white">{languages[lang]?.weatherAnalysisTitle || "Weather Analysis & Image Upload"}</h1>
 
-      <div className="w-full max-w-md flex flex-col gap-2" style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}>
+      <div className="w-full max-w-md flex flex-col gap-2 rounded-md p-4 shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)', color: 'white', border: '1px solid rgba(255, 255, 255, 0.2)' }}>
         <h2 className="text-xl font-semibold mb-1">{languages[lang]?.currentLocationTitle || "Current Location"}</h2>
         <p>{locationName || languages[lang]?.fetchingLocation || "Fetching location..."}</p>
 
@@ -241,10 +216,10 @@ export default function WeatherAnalysis() {
             </AlertDescription>
           </Alert>
         )}
-        <div className="border rounded-md p-4 shadow-sm" style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}>
+        <div className="rounded-md p-4 shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)', color: 'white', border: '1px solid rgba(255, 255, 255, 0.2)' }}>
           <h2 className="text-xl font-semibold mb-2">{languages[lang]?.leafImageTitle || "Leaf Image"}</h2>
-          <img src={getImageSource()} alt={languages[lang]?.leafImageAlt || "Leaf Image"} className="w-32 h-32 object-cover rounded mb-2" style={{ borderRadius: '1rem' }} />
-          <Input type="file" accept="image/*" onChange={handleLeafImageUpload} disabled={showCamera} style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}/>
+          <img src={getImageSource()} alt={languages[lang]?.leafImageAlt || "Leaf Image"} className="w-32 h-32 object-cover rounded-md mb-2" style={{ borderRadius: '1rem' }} />
+          <Input type="file" accept="image/*" onChange={handleLeafImageUpload} disabled={showCamera} style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)', color: 'white', border: '1px solid rgba(255, 255, 255, 0.2)' }}/>
           <Button onClick={() => setShowCamera(true)} disabled={showCamera} style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}>
           <Camera className="mr-2" />
           {languages[lang]?.takePicture || "Take Picture"}
@@ -263,7 +238,7 @@ export default function WeatherAnalysis() {
                 </Alert>
               )}
 
-              <Button onClick={handleCaptureImage} disabled={!hasCameraPermission}  style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}>
+              <Button onClick={handleCaptureImage} disabled={!hasCameraPermission} style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}>
                 {languages[lang]?.captureImage || "Capture Image"}
               </Button>
               <Button onClick={() => setShowCamera(false)} style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}>{languages[lang]?.cancel || "Cancel"}</Button>
@@ -271,24 +246,31 @@ export default function WeatherAnalysis() {
           )}
         </div>
 
-        <form onSubmit={(e) => e.preventDefault()} className="w-full">
-          <Button type="submit" disabled={!leafImage || !weather || isAnalyzing} onClick={handleAnalyze}  style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}>
-            {isAnalyzing
-              ? languages[lang]?.analyzing || "Analyzing..."
-              : languages[lang]?.analyze || "Analyze"}
-          </Button>
-        </form>
+        <Button
+          disabled={!leafImage || !weather || isAnalyzing}
+          onClick={handleAnalyze}
+          style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}
+        >
+          {isAnalyzing
+            ? languages[lang]?.analyzing || "Analyzing..."
+            : languages[lang]?.analyze || "Analyze"}
+        </Button>
       </div>
 
-      <div className="fixed bottom-0 left-0 w-full bg-gray-100 p-4 flex justify-around">
-        <Button variant="ghost" onClick={() => router.push(`/?lang=${lang}`)}>
+      <div className="fixed bottom-0 left-0 w-full p-4 flex justify-around" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)' }}>
+        <Button variant="ghost" onClick={() => router.push(`/?lang=${lang}`)} style={{ color: 'white' }}>
           {languages[lang]?.home || "Home"}
         </Button>
-        <Button variant="ghost">{languages[lang]?.newsletters || "Newsletters"}</Button>
-        <Button variant="ghost">{languages[lang]?.yourCrops || "Your Crops"}</Button>
-        <Button variant="ghost">{languages[lang]?.profile || "Profile"}</Button>
+        <Button variant="ghost" onClick={() => router.push(`/newsletters?lang=${lang}`)} style={{ color: 'white' }}>
+          {languages[lang]?.newsletters || "Newsletters"}
+        </Button>
+        <Button variant="ghost" onClick={() => router.push(`/your-crops?lang=${lang}`)} style={{ color: 'white' }}>
+          {languages[lang]?.yourCrops || "Your Crops"}
+        </Button>
+        <Button variant="ghost" onClick={() => router.push(`/profile?lang=${lang}`)} style={{ color: 'white' }}>
+          {languages[lang]?.profile || "Profile"}
+        </Button>
       </div>
     </div>
   );
 }
-
