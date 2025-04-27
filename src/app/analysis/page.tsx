@@ -1,7 +1,6 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { languages } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { analyzeCropHealth } from "@/ai/flows/analyze-crop-health";
@@ -13,12 +12,10 @@ export default function Analysis() {
   const crop = searchParams.get("crop") || "";
   const soil = searchParams.get("soil") || "";
   const leafImage = searchParams.get("leafImage") || "";
-  const soilImage = searchParams.get("soilImage") || "";
   const temperature = searchParams.get("temperature") || "";
   const conditions = searchParams.get("conditions") || "";
   const humidity = searchParams.get("humidity") || "";
   const windSpeed = searchParams.get("windSpeed") || "";
-  const languageLabel = languages[lang] || "English";
 
   const [analysisResult, setAnalysisResult] = useState<any>(null);
 
@@ -31,7 +28,7 @@ export default function Analysis() {
           cropName: crop,
           soilType: soil,
           photoDataUri: decodeURIComponent(leafImage),
-          soilAnalysisDataUri: decodeURIComponent(soilImage),
+          soilAnalysisDataUri: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w+nLly8YAfT39//MZGbgAAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAAEnQAABJ0Ad5mXcgAAAAhdEVYdENyZWF0aW9uIFRpbWUAZGF0ZSA4LzE1LzIzMEJqAAAAAElFTkSuQmCC", // Dummy data URI since soil analysis is removed
           weatherData: {
             temperatureCelsius: Number(temperature),
             conditions: conditions,
@@ -47,12 +44,11 @@ export default function Analysis() {
     };
 
     analyze();
-  }, [crop, soil, leafImage, soilImage, temperature, conditions, humidity, windSpeed]);
+  }, [crop, soil, leafImage, temperature, conditions, humidity, windSpeed]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <h1 className="text-3xl font-bold mb-4">Crop Analysis</h1>
-      <p className="text-lg mb-4">Language: {languageLabel}</p>
 
       {analysisResult ? (
         <div className="flex flex-col gap-4">
@@ -97,7 +93,7 @@ export default function Analysis() {
       )}
 
       <div className="fixed bottom-0 left-0 w-full bg-gray-100 p-4 flex justify-around">
-        <Button variant="ghost" onClick={() => router.push("/")}>Home</Button>
+        <Button variant="ghost" onClick={() => router.push(`/?lang=${lang}`)}>Home</Button>
         <Button variant="ghost">Newsletters</Button>
         <Button variant="ghost">Your Crops</Button>
         <Button variant="ghost">Profile</Button>

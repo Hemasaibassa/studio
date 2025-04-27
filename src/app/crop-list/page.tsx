@@ -9,7 +9,6 @@ export default function CropList() {
   const router = useRouter();
   const lang = searchParams.get("lang") || "en";
   const cropType = searchParams.get("cropType") || "";
-  const languageLabel = languages[lang] || "English";
 
   const filteredCrops = Object.entries(crops)
     .filter(([key, crop]) => crop.type === cropType)
@@ -26,7 +25,6 @@ export default function CropList() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <h1 className="text-3xl font-bold mb-4">Select Your Crop</h1>
-      <p className="text-lg mb-4">Language: {languageLabel}</p>
       <div className="grid grid-cols-2 gap-4">
         {filteredCrops.map((crop) => (
           <div

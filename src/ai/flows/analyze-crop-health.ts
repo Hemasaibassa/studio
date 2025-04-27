@@ -20,11 +20,6 @@ const AnalyzeCropHealthInputSchema = z.object({
     .describe(
       'A photo of the infected part of the leaf, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'
     ),
-  soilAnalysisDataUri: z
-    .string()
-    .describe(
-      'The soil analysis data as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'
-    ),
   weatherData: z.object({
     temperatureCelsius: z.number().describe('The temperature in Celsius.'),
     conditions: z.string().describe('The weather conditions (e.g., Sunny, Cloudy, Rainy).'),
@@ -62,11 +57,6 @@ const prompt = ai.definePrompt({
         .describe(
           'A photo of the infected part of the leaf, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'
         ),
-      soilAnalysisDataUri: z
-        .string()
-        .describe(
-          'The soil analysis data as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'
-        ),
       weatherData: z.object({
         temperatureCelsius: z.number().describe('The temperature in Celsius.'),
         conditions: z.string().describe('The weather conditions (e.g., Sunny, Cloudy, Rainy).'),
@@ -91,7 +81,6 @@ const prompt = ai.definePrompt({
   Crop Name: {{{cropName}}}
   Soil Type: {{{soilType}}}
   Leaf Photo: {{media url=photoDataUri}}
-  Soil Analysis: {{media url=soilAnalysisDataUri}}
   Weather Data: Temperature: {{{weatherData.temperatureCelsius}}}°C, Conditions: {{{weatherData.conditions}}}, Humidity: {{{weatherData.humidity}}}%, Wind Speed: {{{weatherData.windSpeedKph}}} km/h
 
   Based on this information, provide a diagnosis, a confidence score (0-1), and recommendations for chemical and organic pesticides.
@@ -113,4 +102,3 @@ const analyzeCropHealthFlow = ai.defineFlow<
     return output!;
   }
 );
-

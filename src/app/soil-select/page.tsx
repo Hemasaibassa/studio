@@ -9,7 +9,6 @@ export default function SoilSelect() {
   const router = useRouter();
   const lang = searchParams.get("lang") || "en";
   const crop = searchParams.get("crop") || "";
-  const languageLabel = languages[lang] || "English";
 
   const handleSoilSelect = (soilType: string) => {
     router.push(`/weather-analysis?lang=${lang}&crop=${crop}&soil=${soilType}`);
@@ -18,7 +17,6 @@ export default function SoilSelect() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <h1 className="text-3xl font-bold mb-4">Select Your Soil Type</h1>
-      <p className="text-lg mb-4">Language: {languageLabel}</p>
       <div className="grid grid-cols-2 gap-4">
         {Object.entries(soils).map(([key, soil]) => (
           <div
