@@ -13,7 +13,6 @@ import {Weather} from '@/services/weather';
 
 const RecommendTreatmentInputSchema = z.object({
   crop: z.string().describe('The type of crop (e.g., apple, tomato).'),
-  soilType: z.string().describe('The type of soil used (e.g., sandy, clay).'),
   weather: z.custom<Weather>().describe('The weather conditions at the location.'),
   diagnosis: z.string().describe('The diagnosis of the crop disease.'),
 });
@@ -34,7 +33,6 @@ const prompt = ai.definePrompt({
   input: {
     schema: z.object({
       crop: z.string().describe('The type of crop.'),
-      soilType: z.string().describe('The type of soil.'),
       weather: z.custom<Weather>().describe('The weather conditions.'),
       diagnosis: z.string().describe('The diagnosis of the crop disease.'),
     }),
@@ -45,10 +43,9 @@ const prompt = ai.definePrompt({
       organicPesticideRecommendations: z.array(z.string()).describe('Recommended organic pesticides.'),
     }),
   },
-  prompt: `Based on the crop, soil type, weather conditions, and diagnosis, recommend chemical and organic pesticides.
+  prompt: `Based on the crop, weather conditions, and diagnosis, recommend chemical and organic pesticides.
 
 Crop: {{{crop}}}
-Soil Type: {{{soilType}}}
 Weather: Conditions: {{{weather.conditions}}}, Temperature: {{{weather.temperatureCelsius}}}°C, Humidity: {{{weather.humidity}}}%, Wind Speed: {{{weather.windSpeedKph}}} km/h
 Diagnosis: {{{diagnosis}}}
 

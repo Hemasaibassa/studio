@@ -1,18 +1,14 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { analyzeCropHealth } from '@/ai/flows/analyze-crop-health';
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams
-    const lang = searchParams.get('lang') || 'en';
-    // console.log('lang', lang)
-    const { crop, soil, leafImage, temperature, conditions, humidity, windSpeed, locationName } = request as any;
+    const { lang, crop, leafImage, temperature, conditions, humidity, windSpeed } = await request.json();
 
     const cropType = crop === 'papaya' ? 'fruit' : 'vegetable'; // Example logic
     const analysis = await analyzeCropHealth({
       cropType: cropType,
       cropName: crop,
-      soilType: soil,
       photoDataUri: leafImage,
       weatherData: {
         temperatureCelsius: Number(temperature),

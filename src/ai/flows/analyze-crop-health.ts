@@ -1,6 +1,6 @@
 'use server';
 /**
- * @fileOverview Analyzes crop health based on image input, soil type, crop selection, and weather data.
+ * @fileOverview Analyzes crop health based on image input, crop selection, and weather data.
  *
  * - analyzeCropHealth - A function that analyzes crop health and returns a diagnosis.
  * - AnalyzeCropHealthInput - The input type for the analyzeCropHealth function.
@@ -14,7 +14,6 @@ import {Weather} from '@/services/weather';
 const AnalyzeCropHealthInputSchema = z.object({
   cropType: z.enum(['fruit', 'vegetable']).describe('The type of crop (fruit or vegetable).'),
   cropName: z.string().describe('The name of the crop.'),
-  soilType: z.string().describe('The type of soil used.'),
   photoDataUri: z
     .string()
     .describe(
@@ -51,7 +50,6 @@ const prompt = ai.definePrompt({
     schema: z.object({
       cropType: z.enum(['fruit', 'vegetable']).describe('The type of crop (fruit or vegetable).'),
       cropName: z.string().describe('The name of the crop.'),
-      soilType: z.string().describe('The type of soil used.'),
       photoDataUri: z
         .string()
         .describe(
@@ -79,7 +77,6 @@ const prompt = ai.definePrompt({
 
   Crop Type: {{{cropType}}}
   Crop Name: {{{cropName}}}
-  Soil Type: {{{soilType}}}
   Leaf Photo: {{media url=photoDataUri}}
   Weather Data: Temperature: {{{weatherData.temperatureCelsius}}}°C, Conditions: {{{weatherData.conditions}}}, Humidity: {{{weatherData.humidity}}}%, Wind Speed: {{{weatherData.windSpeedKph}}} km/h
 
