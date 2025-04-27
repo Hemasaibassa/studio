@@ -15,9 +15,9 @@ export default function LanguageSelect() {
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <h1 className="text-3xl font-bold mb-4">Select Your Language</h1>
       <div className="flex flex-wrap justify-center gap-4">
-        {Object.entries(languages).map(([key, label]) => (
+        {Object.entries(languages).map(([key, language]) => (
           <Button key={key} onClick={() => handleLanguageSelect(key)}>
-            {label}
+            {language.language}
           </Button>
         ))}
       </div>
