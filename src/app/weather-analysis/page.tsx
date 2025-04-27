@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { languages, crops } from "@/lib/constants"; // Importing crops for localization
+import { languages, crops, soils } from "@/lib/constants"; // Importing crops for localization
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { soils } from "@/lib/constants";
 
 const formSchema = z.object({
   locationName: z.string().min(2, {
@@ -30,7 +29,7 @@ export default function WeatherAnalysis() {
   const [leafImage, setLeafImage] = useState<string | null>(null);
   const [weather, setWeather] = useState<Weather | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
-  const [locationName, setLocationName] = useState<string | null>(null);
+    const [locationName, setLocationName] = useState<string | null>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [showCamera, setShowCamera] = useState(false);
@@ -38,6 +37,7 @@ export default function WeatherAnalysis() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedSoil, setSelectedSoil] = useState("");
   const [isGeolocationAvailable, setIsGeolocationAvailable] = useState(true);
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,6 +49,53 @@ export default function WeatherAnalysis() {
   useEffect(() => {
     setLanguageLabel(languages[lang] || "English");
   }, [lang]);
+
+    useEffect(() => {
+        // Get user's current location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const newLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
+                    setLocation(newLocation);
+
+                    // Reverse geocode to get the location name
+                    try {
+                        const response = await fetch(
+                            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${newLocation.lat}&lon=${newLocation.lng}`
+                        );
+                        const data = await response.json();
+                         const fetchedLocationName = data.display_name || languages[lang]?.unknownLocation || "Unknown location";
+                        setLocationName(fetchedLocationName);
+                        form.setValue("locationName", fetchedLocationName); // Set the form value
+                    } catch (error) {
+                        console.error("Error getting location name:", error);
+                        setLocationName(languages[lang]?.unknownLocation || "Unknown location");
+                        form.setValue("locationName", languages[lang]?.unknownLocation || "Unknown location"); // Set the form value
+                    }
+                },
+                (error) => {
+                    console.error("Error getting location:", error);
+                    toast({
+                        variant: 'destructive',
+                        title: languages[lang]?.locationAccessDeniedTitle || 'Location Access Denied',
+                        description: languages[lang]?.locationAccessDeniedDescription || 'Please enable location permissions in your browser settings to use this app.',
+                    });
+                }
+            );
+        } else {
+            console.error("Geolocation is not supported by this browser.");
+            setIsGeolocationAvailable(false); // Set the state to indicate geolocation is not supported
+            toast({
+                variant: 'destructive',
+                title: languages[lang]?.geolocationNotSupportedTitle || 'Geolocation Not Supported',
+                description: languages[lang]?.geolocationNotSupportedDescription || 'Your browser does not support geolocation.',
+            });
+        }
+    }, [lang, toast, form]);
+
 
   useEffect(() => {
     const getCameraPermission = async () => {
@@ -70,54 +117,10 @@ export default function WeatherAnalysis() {
       }
     };
 
-    getCameraPermission();
-  }, [lang, toast]);
-
-  useEffect(() => {
-    // Get user's current location
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const newLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          setLocation(newLocation);
-
-          // Reverse geocode to get the location name
-          try {
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${newLocation.lat}&lon=${newLocation.lng}`
-            );
-            const data = await response.json();
-            const fetchedLocationName = data.display_name || languages[lang]?.unknownLocation || "Unknown location";
-            setLocationName(fetchedLocationName);
-            form.setValue("locationName", fetchedLocationName); // Set the form value
-          } catch (error) {
-            console.error("Error getting location name:", error);
-            setLocationName(languages[lang]?.unknownLocation || "Unknown location");
-            form.setValue("locationName", languages[lang]?.unknownLocation || "Unknown location"); // Set the form value
-          }
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          toast({
-            variant: 'destructive',
-            title: languages[lang]?.locationAccessDeniedTitle || 'Location Access Denied',
-            description: languages[lang]?.locationAccessDeniedDescription || 'Please enable location permissions in your browser settings to use this app.',
-          });
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-      setIsGeolocationAvailable(false); // Set the state to indicate geolocation is not supported
-      toast({
-        variant: 'destructive',
-        title: languages[lang]?.geolocationNotSupportedTitle || 'Geolocation Not Supported',
-        description: languages[lang]?.geolocationNotSupportedDescription || 'Your browser does not support geolocation.',
-      });
+    if (showCamera) {
+      getCameraPermission();
     }
-  }, [lang, toast, form]);
+  }, [lang, toast, showCamera]);
 
   useEffect(() => {
     if (location) {
@@ -153,14 +156,22 @@ export default function WeatherAnalysis() {
     if (leafImage && weather && selectedSoil) {
       setIsAnalyzing(true);
       try {
-        // Build the URL with query parameters
-        const url = `/analysis?lang=${lang}&crop=${crop}&soil=${selectedSoil}&leafImage=${encodeURIComponent(leafImage)}&temperature=${weather.temperatureCelsius}&conditions=${weather.conditions}&humidity=${weather.humidity}&windSpeed=${weather.windSpeedKph}`;
-
-        const response = await fetch(url, {
-          method: 'GET',
+        const response = await fetch('/analysis', {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify({
+            lang,
+            crop,
+            soil,
+            leafImage,
+            temperature: weather.temperatureCelsius,
+            conditions: weather.conditions,
+            humidity: weather.humidity,
+            windSpeed: weather.windSpeedKph,
+            locationName: locationName,
+          }),
         });
 
         if (response.ok) {
@@ -212,20 +223,20 @@ export default function WeatherAnalysis() {
       <h1 className="text-3xl font-bold mb-2">{languages[lang]?.weatherAnalysisTitle || "Weather Analysis & Image Upload"}</h1>
 
       <div className="w-full max-w-md flex flex-col gap-2">
-        <h2 className="text-xl font-semibold mb-1">{languages[lang]?.currentLocationTitle || "Current Location"}</h2>
-        <p>{locationName || languages[lang]?.fetchingLocation || "Fetching location..."}</p>
+          <h2 className="text-xl font-semibold mb-1">{languages[lang]?.currentLocationTitle || "Current Location"}</h2>
+          <p>{locationName || languages[lang]?.fetchingLocation || "Fetching location..."}</p>
 
-        <h2 className="text-xl font-semibold mb-1">{languages[lang]?.currentWeatherTitle || "Current Weather"}</h2>
-        {weather ? (
-          <>
-            <p>{languages[lang]?.temperature || "Temperature"}: {weather.temperatureCelsius}°C</p>
-            <p>{languages[lang]?.conditions || "Conditions"}: {weather.conditions}</p>
-            <p>{languages[lang]?.humidity || "Humidity"}: {weather.humidity}%</p>
-            <p>{languages[lang]?.windSpeed || "Wind Speed"}: {weather.windSpeedKph} km/h</p>
-          </>
-        ) : (
-          <p>{languages[lang]?.fetchingWeather || "Fetching weather..."}</p>
-        )}
+          <h2 className="text-xl font-semibold mb-1">{languages[lang]?.currentWeatherTitle || "Current Weather"}</h2>
+          {weather ? (
+              <>
+                  <p>{languages[lang]?.temperature || "Temperature"}: {weather.temperatureCelsius}°C</p>
+                  <p>{languages[lang]?.conditions || "Conditions"}: {weather.conditions}</p>
+                  <p>{languages[lang]?.humidity || "Humidity"}: {weather.humidity}%</p>
+                  <p>{languages[lang]?.windSpeed || "Wind Speed"}: {weather.windSpeedKph} km/h</p>
+              </>
+          ) : (
+              <p>{languages[lang]?.fetchingWeather || "Fetching weather..."}</p>
+          )}
       </div>
 
       <div className="w-full max-w-md flex flex-col gap-4">
@@ -241,8 +252,8 @@ export default function WeatherAnalysis() {
         <div className="border rounded-md p-4 shadow-sm">
           <h2 className="text-xl font-semibold mb-2">{languages[lang]?.leafImageTitle || "Leaf Image"}</h2>
           <img src={getImageSource()} alt={languages[lang]?.leafImageAlt || "Leaf Image"} className="w-32 h-32 object-cover rounded mb-2" />
-          <Input type="file" accept="image/*" onChange={handleLeafImageUpload} />
-          <Button onClick={() => setShowCamera(true)}>{languages[lang]?.takePicture || "Take Picture"}</Button>
+          <Input type="file" accept="image/*" onChange={handleLeafImageUpload} disabled={showCamera}/>
+          <Button onClick={() => setShowCamera(true)} disabled={showCamera}>{languages[lang]?.takePicture || "Take Picture"}</Button>
 
           {showCamera && (
             <div>
@@ -260,31 +271,32 @@ export default function WeatherAnalysis() {
               <Button onClick={handleCaptureImage} disabled={!hasCameraPermission}>
                 {languages[lang]?.captureImage || "Capture Image"}
               </Button>
+                <Button onClick={() => setShowCamera(false)}>{languages[lang]?.cancel || "Cancel"}</Button>
             </div>
           )}
         </div>
-        <div>
-          <Select onValueChange={(value) => setSelectedSoil(value)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder={languages[lang]?.selectSoilType || "Select Soil Type"} />
-            </SelectTrigger>
-            <SelectContent>
-              {soilOptions.map((soil) => (
-                <SelectItem key={soil.value} value={soil.value}>
-                  {soil.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+          <div>
+              <Select onValueChange={(value) => setSelectedSoil(value)}>
+                  <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder={languages[lang]?.selectSoilType || "Select Soil Type"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                      {soilOptions.map((soil) => (
+                          <SelectItem key={soil.value} value={soil.value}>
+                              {soil.label}
+                          </SelectItem>
+                      ))}
+                  </SelectContent>
+              </Select>
+          </div>
         <form onSubmit={(e) => e.preventDefault()} className="w-full">
           <div className="grid gap-2">
             <div className="space-y-1">
-              <h2 className="text-xl font-semibold mb-2">{languages[lang]?.locationNameTitle || "Location Name"}</h2>
+                <h2 className="text-xl font-semibold mb-2">{languages[lang]?.locationNameTitle || "Location Name"}</h2>
               <Input id="locationName" placeholder={languages[lang]?.locationNamePlaceholder || "Enter location name"} type="text"  value={form.watch("locationName")} disabled/>
             </div>
           </div>
-          <Button type="submit" disabled={!leafImage || !weather || isAnalyzing} onClick={handleAnalyze}>
+          <Button type="submit" disabled={!leafImage || !weather || isAnalyzing || !selectedSoil} onClick={handleAnalyze}>
             {isAnalyzing
               ? languages[lang]?.analyzing || "Analyzing..."
               : languages[lang]?.analyze || "Analyze"}
@@ -303,4 +315,3 @@ export default function WeatherAnalysis() {
     </div>
   );
 }
-
