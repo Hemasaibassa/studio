@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { Camera } from "lucide-react";
 
 const formSchema = z.object({
   locationName: z.string().min(2, {
@@ -161,7 +162,6 @@ export default function WeatherAnalysis() {
           body: JSON.stringify({
             lang,
             crop,
-            soil: "Generic", // removed soil type
             leafImage,
             temperature: weather.temperatureCelsius,
             conditions: weather.conditions,
@@ -211,10 +211,10 @@ export default function WeatherAnalysis() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen py-2 px-4 gap-4">
-      <h1 className="text-3xl font-bold mb-2">{languages[lang]?.weatherAnalysisTitle || "Weather Analysis & Image Upload"}</h1>
+    <div className="flex flex-col items-center justify-start min-h-screen py-2 px-4 gap-4" style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}>
+      <h1 className="text-3xl font-bold mb-2"  style={{ color: 'white' }}>{languages[lang]?.weatherAnalysisTitle || "Weather Analysis & Image Upload"}</h1>
 
-      <div className="w-full max-w-md flex flex-col gap-2">
+      <div className="w-full max-w-md flex flex-col gap-2" style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}>
         <h2 className="text-xl font-semibold mb-1">{languages[lang]?.currentLocationTitle || "Current Location"}</h2>
         <p>{locationName || languages[lang]?.fetchingLocation || "Fetching location..."}</p>
 
@@ -231,7 +231,7 @@ export default function WeatherAnalysis() {
         )}
       </div>
 
-      <div className="w-full max-w-md flex flex-col gap-4">
+      <div className="w-full max-w-md flex flex-col gap-4" >
         {/* Display geolocation error message */}
         {!isGeolocationAvailable && (
           <Alert variant="destructive">
@@ -241,11 +241,14 @@ export default function WeatherAnalysis() {
             </AlertDescription>
           </Alert>
         )}
-        <div className="border rounded-md p-4 shadow-sm">
+        <div className="border rounded-md p-4 shadow-sm" style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}>
           <h2 className="text-xl font-semibold mb-2">{languages[lang]?.leafImageTitle || "Leaf Image"}</h2>
-          <img src={getImageSource()} alt={languages[lang]?.leafImageAlt || "Leaf Image"} className="w-32 h-32 object-cover rounded mb-2" />
+          <img src={getImageSource()} alt={languages[lang]?.leafImageAlt || "Leaf Image"} className="w-32 h-32 object-cover rounded mb-2" style={{ borderRadius: '1rem' }} />
           <Input type="file" accept="image/*" onChange={handleLeafImageUpload} disabled={showCamera} />
-          <Button onClick={() => setShowCamera(true)} disabled={showCamera}>{languages[lang]?.takePicture || "Take Picture"}</Button>
+          <Button onClick={() => setShowCamera(true)} disabled={showCamera} style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}>
+          <Camera className="mr-2" />
+          {languages[lang]?.takePicture || "Take Picture"}
+          </Button>
 
           {showCamera && (
             <div>
@@ -260,10 +263,10 @@ export default function WeatherAnalysis() {
                 </Alert>
               )}
 
-              <Button onClick={handleCaptureImage} disabled={!hasCameraPermission}>
+              <Button onClick={handleCaptureImage} disabled={!hasCameraPermission}  style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}>
                 {languages[lang]?.captureImage || "Capture Image"}
               </Button>
-              <Button onClick={() => setShowCamera(false)}>{languages[lang]?.cancel || "Cancel"}</Button>
+              <Button onClick={() => setShowCamera(false)} style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}>{languages[lang]?.cancel || "Cancel"}</Button>
             </div>
           )}
         </div>
@@ -272,10 +275,10 @@ export default function WeatherAnalysis() {
           <div className="grid gap-2">
             <div className="space-y-1">
               <h2 className="text-xl font-semibold mb-2">{languages[lang]?.locationNameTitle || "Location Name"}</h2>
-              <Input id="locationName" placeholder={languages[lang]?.locationNamePlaceholder || "Enter location name"} type="text" value={form.watch("locationName")} disabled />
+              <Input id="locationName" placeholder={languages[lang]?.locationNamePlaceholder || "Enter location name"} type="text" value={form.watch("locationName")} disabled style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }} />
             </div>
           </div>
-          <Button type="submit" disabled={!leafImage || !weather || isAnalyzing} onClick={handleAnalyze}>
+          <Button type="submit" disabled={!leafImage || !weather || isAnalyzing} onClick={handleAnalyze}  style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}>
             {isAnalyzing
               ? languages[lang]?.analyzing || "Analyzing..."
               : languages[lang]?.analyze || "Analyze"}

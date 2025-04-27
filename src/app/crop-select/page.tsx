@@ -30,20 +30,20 @@ export default function CropSelect() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1 className="text-3xl font-bold mb-4">{languages[lang]?.selectCropType || "Select Crop Type"}</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen py-2" style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}>
+      <h1 className="text-3xl font-bold mb-4" style={{ color: 'white' }}>{languages[lang]?.selectCropType || "Select Crop Type"}</h1>
 
       <Select onValueChange={handleCropTypeSelect}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[180px]" style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}>
           <SelectValue placeholder={languages[lang]?.selectCropTypePlaceholder || "Select crop type"} />
         </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="fruit">{languages[lang]?.fruit || "Fruit"}</SelectItem>
-          <SelectItem value="vegetable">{languages[lang]?.vegetable || "Vegetable"}</SelectItem>
+        <SelectContent style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}>
+          <SelectItem value="fruit"  style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}>{languages[lang]?.fruit || "Fruit"}</SelectItem>
+          <SelectItem value="vegetable"  style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}>{languages[lang]?.vegetable || "Vegetable"}</SelectItem>
         </SelectContent>
       </Select>
 
-      <Button disabled={!cropType} onClick={handleNext} className="mt-4">
+      <Button disabled={!cropType} onClick={handleNext} className="mt-4"  style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}>
       {languages[lang]?.next || "Next"}
       </Button>
     </div>

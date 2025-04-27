@@ -26,23 +26,25 @@ export default function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1 className="text-3xl font-bold mb-4">{languages[lang]?.login || "Login"}</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen py-2" style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}>
+      <h1 className="text-3xl font-bold mb-4" style={{ color: 'white' }}>{languages[lang]?.login || "Login"}</h1>
       <div className="flex flex-col gap-4">
         <Input
+          style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}
           type="text"
           placeholder={languages[lang]?.username || "Username"}
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
         <Input
+          style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}
           type="password"
           placeholder={languages[lang]?.password || "Password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button onClick={handleLogin}>{languages[lang]?.login || "Login"}</Button>
-        <Button variant="secondary" onClick={() => router.push(`/signup?lang=${lang}`)}>
+        <Button style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }} onClick={handleLogin}>{languages[lang]?.login || "Login"}</Button>
+        <Button style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }} variant="secondary" onClick={() => router.push(`/signup?lang=${lang}`)}>
         {languages[lang]?.signUp || "Sign Up"}
         </Button>
       </div>

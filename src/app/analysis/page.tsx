@@ -53,18 +53,18 @@ export default function AnalysisPage() {
   }, [lang]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1 className="text-3xl font-bold mb-4">{languages[lang]?.analysisResult || "Crop Analysis"}</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen py-2" style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}>
+      <h1 className="text-3xl font-bold mb-4" style={{ color: 'white' }}>{languages[lang]?.analysisResult || "Crop Analysis"}</h1>
 
       {analysisResult ? (
         <div className="flex flex-col gap-4">
-          <div className="border rounded p-4">
+          <div className="border rounded p-4" style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}>
             <h2 className="text-xl font-semibold mb-2">{languages[lang]?.diagnosis || "Diagnosis"}</h2>
             <p>{analysisResult.diagnosis}</p>
             <p>{languages[lang]?.confidence || "Confidence"}: {analysisResult.confidence}</p>
           </div>
 
-          <div className="border rounded p-4">
+          <div className="border rounded p-4" style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}>
             <h2 className="text-xl font-semibold mb-2">{languages[lang]?.recommendations || "Recommendations"}</h2>
             <div>
               <h3 className="text-lg font-semibold">{languages[lang]?.chemicalPesticides || "Chemical Pesticides"}</h3>
@@ -92,7 +92,7 @@ export default function AnalysisPage() {
             </div>
           </div>
 
-          <Button onClick={() => router.push("/get-medicines")}>{languages[lang]?.getMedicines || "Get Medicines"}</Button>
+          <Button onClick={() => router.push("/get-medicines")} style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', borderRadius: '1rem', padding: '0.75rem' }}>{languages[lang]?.getMedicines || "Get Medicines"}</Button>
         </div>
       ) : (
         <p>{languages[lang]?.analyzing || "Analyzing..."}</p>

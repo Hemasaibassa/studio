@@ -19,20 +19,21 @@ export default function CropList() {
     }));
 
   const handleCropSelect = (cropKey: string) => {
-    router.push(`/soil-select?lang=${lang}&crop=${cropKey}`);
+    router.push(`/weather-analysis?lang=${lang}&crop=${cropKey}`);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1 className="text-3xl font-bold mb-4">{languages[lang]?.selectYourCrop || "Select Your Crop"}</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen py-2" style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}>
+      <h1 className="text-3xl font-bold mb-4" style={{ color: 'white' }}>{languages[lang]?.selectYourCrop || "Select Your Crop"}</h1>
       <div className="grid grid-cols-2 gap-4">
         {filteredCrops.map((crop) => (
           <div
             key={crop.key}
             className="flex flex-col items-center justify-center p-4 border rounded cursor-pointer"
             onClick={() => handleCropSelect(crop.key)}
+            style={{ backgroundColor: 'white', color: 'black', borderRadius: '1rem', padding: '0.75rem' }}
           >
-            <img src={crop.image} alt={crop.name} className="w-32 h-32 object-cover rounded mb-2" />
+            <img src={crop.image} alt={crop.name} className="w-32 h-32 object-cover rounded mb-2" style={{ borderRadius: '1rem' }} />
             <p className="text-lg">{crop.name}</p>
           </div>
         ))}
